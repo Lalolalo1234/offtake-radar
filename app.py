@@ -1,9 +1,14 @@
 import streamlit as st
 import pandas as pd
+<<<<<<< HEAD
+=======
+import os
+>>>>>>> a3807046786415b9a37a657b4b3a94c43a9c22de
 
 # Configuración de la página
 st.set_page_config(page_title="EU–Argentina Offtake Radar", layout="wide")
 
+<<<<<<< HEAD
 # Lista oficial definitiva con los 8 proyectos de cobre de Argentina
 def obtener_datos_oficiales():
     return pd.DataFrame([
@@ -108,6 +113,25 @@ def obtener_datos_oficiales():
 # Inicializar estado en memoria de la sesión
 if "df_proyectos" not in st.session_state:
     st.session_state.df_proyectos = obtener_datos_oficiales()
+=======
+# Archivo local para persistencia de datos del CRM
+CSV_FILE = "proyectos_crm.csv"
+
+def cargar_datos():
+    if os.path.exists(CSV_FILE):
+        try:
+            return pd.read_csv(CSV_FILE)
+        except Exception:
+            pass
+    # DataFrame inicial por defecto si no existe el archivo
+    return pd.DataFrame(columns=[
+        "ID_Proyecto", "Nombre_Proyecto", "Empresa_Contraparte", "Sector",
+        "Commodity", "Estado", "Volumen_tn_anio", "Responsable", "Notas", "Proxima_Accion"
+    ])
+
+def guardar_datos(df):
+    df.to_csv(CSV_FILE, index=False)
+>>>>>>> a3807046786415b9a37a657b4b3a94c43a9c22de
 
 # --- SISTEMA DE AUTENTICACIÓN SIMPLE ---
 def check_password():
@@ -140,16 +164,25 @@ st.markdown("Espacio de trabajo interno para el seguimiento de proyectos de off-
 
 menu = st.sidebar.selectbox("Secciones", ["Gestión de Proyectos (CRM)", "Contratos Offtake", "Directorio de Empresas", "Pipeline / Seguimiento"])
 
+<<<<<<< HEAD
+=======
+df_proyectos = cargar_datos()
+
+>>>>>>> a3807046786415b9a37a657b4b3a94c43a9c22de
 if menu == "Gestión de Proyectos (CRM)":
     st.header("📋 Base de Datos y CRM de Proyectos Mineros")
     st.markdown("Edita la tabla directamente o agrega nuevos proyectos utilizando los campos personalizados.")
 
+<<<<<<< HEAD
     # Botón para restablecer datos si es necesario
     if st.sidebar.button("🔄 Recargar Base de Datos"):
         st.session_state.df_proyectos = obtener_datos_oficiales()
         st.rerun()
 
     # Formulario para agregar un proyecto nuevo
+=======
+    # Formulario rápido para agregar un proyecto nuevo de forma limpia
+>>>>>>> a3807046786415b9a37a657b4b3a94c43a9c22de
     with st.expander("➕ Agregar Nuevo Proyecto Minero"):
         with st.form("form_nuevo_proyecto"):
             col1, col2 = st.columns(2)
@@ -168,7 +201,11 @@ if menu == "Gestión de Proyectos (CRM)":
             submit_btn = st.form_submit_button("Guardar Proyecto")
             if submit_btn:
                 if nuevo_nombre:
+<<<<<<< HEAD
                     nuevo_id = f"PROJ-{len(st.session_state.df_proyectos) + 1:03d}"
+=======
+                    nuevo_id = f"PROJ-{len(df_proyectos) + 1:03d}"
+>>>>>>> a3807046786415b9a37a657b4b3a94c43a9c22de
                     nueva_fila = pd.DataFrame([{
                         "ID_Proyecto": nuevo_id,
                         "Nombre_Proyecto": nuevo_nombre,
@@ -181,18 +218,33 @@ if menu == "Gestión de Proyectos (CRM)":
                         "Notas": nuevo_notas,
                         "Proxima_Accion": nueva_proxima
                     }])
+<<<<<<< HEAD
                     st.session_state.df_proyectos = pd.concat([st.session_state.df_proyectos, nueva_fila], ignore_index=True)
+=======
+                    df_proyectos = pd.concat([df_proyectos, nueva_fila], ignore_index=True)
+                    guardar_datos(df_proyectos)
+>>>>>>> a3807046786415b9a37a657b4b3a94c43a9c22de
                     st.success(f"¡Proyecto '{nuevo_nombre}' agregado con éxito!")
                     st.rerun()
                 else:
                     st.warning("Por lo menos ingresa el Nombre del Proyecto.")
 
+<<<<<<< HEAD
     # Editor de datos interactivo
     st.subheader("Modificar / Actualizar Proyectos Registrados")
     edited_df = st.data_editor(st.session_state.df_proyectos, num_rows="dynamic", use_container_width=True, key="editor_proyectos")
     
     # Actualizamos el estado con lo editado en la tabla
     st.session_state.df_proyectos = edited_df
+=======
+    # Editor de datos interactivo conectado al archivo CSV
+    st.subheader("Modificar / Actualizar Proyectos Registrados")
+    edited_df = st.data_editor(df_proyectos, num_rows="dynamic", use_container_width=True, key="editor_proyectos")
+    
+    if st.button("💾 Guardar Cambios en la Base de Datos"):
+        guardar_datos(edited_df)
+        st.success("¡Base de datos actualizada y guardada correctamente!")
+>>>>>>> a3807046786415b9a37a657b4b3a94c43a9c22de
 
 elif menu == "Contratos Offtake":
     st.header("🤝 Acuerdos de Comercialización (Offtakes)")
@@ -219,5 +271,9 @@ elif menu == "Pipeline / Seguimiento":
     st.data_editor(df_pipeline, num_rows="dynamic", use_container_width=True)
 
 st.sidebar.markdown("---")
+<<<<<<< HEAD
 st.sidebar.text("Uso interno. La actividad queda registrada.")
 
+=======
+st.sidebar.text("Uso interno. La actividad queda registrada.")
+>>>>>>> a3807046786415b9a37a657b4b3a94c43a9c22de
